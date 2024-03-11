@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ты зайка</title>
+</head>
+<body>
+    <p>
+        Все что вы напишете ниже будет отправлено в базу данных, <br>
+        и никто без необходимого кода не сможет прочитать ваши сообщения!
+    </p>
+    <textarea id="text" placeholder="Тут ты можешь выговориться"></textarea>
+    <button id="btn" onclick="sendData()">Отправить</button>
+    <p id="success"></p>
+    <textarea placeholder="Secret key" id="key"></textarea>
+    <button onclick="show()">Показать все тексты</button>
+    <div id="all-data" style="display: none;">
+        {% for text in data %}
+            <p>{{text}}</p>
+        {% endfor %}
+    </div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script>
+    const text = document.getElementById('text');
+    const success = document.getElementById('success');
+    const data = document.getElementById('all-data');
+    const key = document.getElementById('key');
+
+    const sendData = () => {
+        $.post('/add/', {
+            text: text.value,
+        }, (response) => {
+            success.innerText = response;
+            window.location.reload(true);
+        })
+    }
+
+    const show = () => {
+        $.post('/view/', {
+            key: key.value,
+        }, (response) => {
+            if(response==='True'){
+                data.style.display = 'block'
+            }
+        })
+    }
+</script>
+</html>
